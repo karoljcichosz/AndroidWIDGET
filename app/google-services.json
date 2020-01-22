@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "509819119614",
+    "firebase_url": "https://polar-ray-265420.firebaseio.com",
+    "project_id": "polar-ray-265420",
+    "storage_bucket": "polar-ray-265420.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:509819119614:android:2561e09ee2f5c2cd1f02af",
+        "android_client_info": {
+          "package_name": "com.example.shopmap"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "509819119614-q3pik8j5mrai1pa0bviq9l5h3sk689db.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyABZcoxn7ulJzuToXvW7x4LbEyuIRLK6Wo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "509819119614-q3pik8j5mrai1pa0bviq9l5h3sk689db.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

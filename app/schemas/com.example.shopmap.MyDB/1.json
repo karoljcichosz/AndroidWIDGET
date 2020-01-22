@@ -1,0 +1,63 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "cd931fa5580ba88662459390dbaa46c2",
+    "entities": [
+      {
+        "tableName": "Shop",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`pid` INTEGER NOT NULL, `nazwa` TEXT, `opis` TEXT, `promien` INTEGER NOT NULL, `x` REAL NOT NULL, `y` REAL NOT NULL, PRIMARY KEY(`pid`))",
+        "fields": [
+          {
+            "fieldPath": "pid",
+            "columnName": "pid",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nazwa",
+            "columnName": "nazwa",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "opis",
+            "columnName": "opis",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "promien",
+            "columnName": "promien",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "x",
+            "columnName": "x",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "y",
+            "columnName": "y",
+            "affinity": "REAL",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "pid"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"cd931fa5580ba88662459390dbaa46c2\")"
+    ]
+  }
+}
