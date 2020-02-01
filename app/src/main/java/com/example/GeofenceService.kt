@@ -20,6 +20,7 @@ import com.example.shopmap.MyDB
 import com.example.shopmap.Shop
 import com.example.shopmap.geofence.GeofenceBroadcastReceiver
 import com.google.android.gms.location.*
+import com.google.android.gms.location.Geofence.NEVER_EXPIRE
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -27,12 +28,9 @@ import kotlin.collections.ArrayList
 class GeofenceService : IntentService("geo") {
 
     private lateinit var locationManager: LocationManager
-    private lateinit var locationListener: LocationListener
     private lateinit var geofencingClient : GeofencingClient
     private var geofenceList = ArrayList<Geofence>()
-    private lateinit var shops : List<Shop>
     private val MIN_TIME: Long = 400
-    private val MIN_DISTANCE = 1000f
     lateinit private var db : MyDB
     private val binder = LocalBinder()
 
@@ -49,16 +47,7 @@ class GeofenceService : IntentService("geo") {
             MyDB::class.java, "database-name"
         ).allowMainThreadQueries().build()
         geofencingClient = LocationServices.getGeofencingClient(this)
-        updateGeofenceLocations(this)
-        shops= db.ProductDAO().all
-        shops.forEach{shop -> geofenceList.add(
-            Geofence.Builder()
-                .setCircularRegion(shop.x, shop.y, shop.promien.toFloat())
-                .setRequestId(shop.nazwa)
-                .setExpirationDuration(MIN_TIME)
-                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER or Geofence.GEOFENCE_TRANSITION_EXIT)
-                .build())
-        }
+        updateGeofenceLocations(this, true)
         locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
     }
@@ -106,11 +95,9 @@ class GeofenceService : IntentService("geo") {
     }
 
     private fun getGeofencingRequest(geofenceList: ArrayList<Geofence>): GeofencingRequest {
-        return GeofencingRequest.Builder().apply {
-            setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER)
-            if(!geofenceList.isEmpty())
-                addGeofences(geofenceList)
-        }.build()
+        return GeofencingRequest.Builder()
+            .addGeofences(geofenceList)
+            .setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER).build()
     }
 
     private fun getPendingIntent(context: Context): PendingIntent {
@@ -118,27 +105,25 @@ class GeofenceService : IntentService("geo") {
         return PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
     }
 
-    fun updateGeofenceLocations(context: Context) {
-        shops= db.ProductDAO().all
+    fun updateGeofenceLocations(context: Context, initial: Boolean) {
+        val shops= db.ProductDAO().all
+        if(!initial && Companion.shops.size==shops.size)
+            return
+        Companion.shops=shops
         geofenceList.clear()
         shops.forEach{shop -> geofenceList.add(
             Geofence.Builder()
                 .setCircularRegion(shop.x, shop.y, if(shop.promien==0) 1f else shop.promien.toFloat())
                 .setRequestId(shop.nazwa)
-                .setExpirationDuration(MIN_TIME)
+                .setExpirationDuration(-1L)
                 .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER or Geofence.GEOFENCE_TRANSITION_EXIT)
                 .build())
         }
-            geofencingClient.removeGeofences(getPendingIntent(context))
         if(!geofenceList.isEmpty())
             geofencingClient.addGeofences(getGeofencingRequest(geofenceList), getPendingIntent(context))?.run {
                 addOnSuccessListener {
-                    // Geofences added
-                    // ...
                 }
                 addOnFailureListener {
-                    // Failed to add geofences
-                    // ...
                 }
             }
         }
@@ -173,7 +158,7 @@ class GeofenceService : IntentService("geo") {
         val pendingIntent: PendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
 
         var builder = NotificationCompat.Builder(context, CHANNEL)
-            .setContentTitle("Nowa lokalizacja")
+            .setContentTitle("geofence")
             .setContentText(geofenceTransitionDetails)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setContentIntent(pendingIntent)
@@ -200,6 +185,10 @@ class GeofenceService : IntentService("geo") {
                 context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channel)
         }
+    }
+
+    companion object {
+        private lateinit var shops : List<Shop>
     }
 
 }

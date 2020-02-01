@@ -140,7 +140,7 @@ class ListActivity : AppCompatActivity() {
             adapter.addAll(db.ProductDAO().all)
             Toast.makeText(applicationContext,"Dodano",Toast.LENGTH_SHORT).show()
             var geofenceHandler = GeofenceService()
-            geofenceHandler.updateGeofenceLocations(applicationContext)
+            geofenceHandler.updateGeofenceLocations(applicationContext, false)
             popupWindow.dismiss()
         }
 

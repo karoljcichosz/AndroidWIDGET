@@ -10,4 +10,8 @@
     <string name="lista_zakup_w">coo</string>
     <string name="title_activity_main2">Main2Activity</string>
     <string name="mapa">Mapa</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
+    <string name="aaa">aaa</string>
+    <string name="todo">TODO</string>
 </resources>

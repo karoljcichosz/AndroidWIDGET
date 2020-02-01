@@ -21,6 +21,7 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.room.Room
 import com.example.GeofenceService
+import com.example.shopmap.apka.MainActivity
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -71,7 +72,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
             MyDB::class.java, "database-name"
         ).allowMainThreadQueries().build()
         shops= db.ProductDAO().all
-        val intent = Intent(this, GeofenceService::class.java)
     }
 
     /**
@@ -141,6 +141,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
             mMap.addMarker(MarkerOptions().position(LatLng(shop.x,shop.y)).title(shop.nazwa))
             if (shop.promien!=0)
                 mMap.addCircle(CircleOptions().center(LatLng(shop.x,shop.y)).radius(shop.promien.toDouble()))
+            MainActivity.mService.updateGeofenceLocations(this, false)
             Toast.makeText(applicationContext,"Dodano", Toast.LENGTH_SHORT).show()
             popupWindow.dismiss()
         }

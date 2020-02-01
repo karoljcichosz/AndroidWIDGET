@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.shopmap">
+
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but you must specify either coarse or fine
@@ -8,10 +9,8 @@
     -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission. ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <!-- Required if your app targets Android 10 (API level 29) or higher -->
-    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
-
+    <uses-permission android:name="android.permission.INTERNET" /> <!-- Required if your app targets Android 10 (API level 29) or higher -->
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -20,6 +19,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <receiver android:name=".lab5">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/lab5_info" />
+        </receiver>
+
         <activity android:name=".ListActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -53,12 +61,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <receiver android:name=".geofence.GeofenceBroadcastReceiver"
+
+        <receiver
+            android:name=".geofence.GeofenceBroadcastReceiver"
             android:enabled="true"
-            android:exported="true">
-        </receiver>
-        <service android:name="com.example.GeofenceService"
-            android:enabled="true"/>
+            android:exported="true"></receiver>
+
+        <service
+            android:name="com.example.GeofenceService"
+            android:enabled="true" />
     </application>
 
 </manifest>

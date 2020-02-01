@@ -19,9 +19,10 @@ class MainActivity : AppCompatActivity() {
 
     lateinit private var intentMap: Intent
     lateinit private var intentList : Intent
-    private lateinit var mService: GeofenceService
     private var mBound: Boolean = false
-
+    companion object {
+        lateinit var mService: GeofenceService
+    }
     private val connection = object : ServiceConnection {
 
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
@@ -43,17 +44,20 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         intentList=Intent(this, ListActivity::class.java)
         intentMap=Intent(this, MapsActivity::class.java)
+        val intent =Intent(this, GeofenceService::class.java)
+        startService(intent)
+        bindService(intent, connection, Context.BIND_AUTO_CREATE)
     }
 
     override fun onStart() {
         super.onStart()
         val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
-//        startService(Intent(this, GeofenceService::class.java))
-        val intent =Intent(this, GeofenceService::class.java)
-        startService(intent)
-        bindService(intent, connection, Context.BIND_AUTO_CREATE)
         if(mBound)
-            mService.updateGeofenceLocations(this)
+            mService.updateGeofenceLocations(this, false)
+        else {
+            val intent = Intent(this, GeofenceService::class.java)
+            bindService(intent, connection, Context.BIND_AUTO_CREATE)
+        }
 
 
         if(!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
@@ -62,12 +66,14 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onStop() {
-        super.onStop()
-        unbindService(connection)
-        mBound = false
+    override fun onDestroy() {
+        super.onDestroy()
+        if(mBound)
+        {
+            mBound=false
+            unbindService(connection)
+        }
     }
-
 
     fun clickList(view: View)
     {
