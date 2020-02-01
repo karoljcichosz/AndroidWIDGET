@@ -15,8 +15,7 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.room.Room
-import com.example.shopmap.R
-import com.example.shopmap.geofence.GeofenceService
+import com.example.GeofenceService
 
 
 class ListActivity : AppCompatActivity() {
@@ -141,7 +140,7 @@ class ListActivity : AppCompatActivity() {
             adapter.addAll(db.ProductDAO().all)
             Toast.makeText(applicationContext,"Dodano",Toast.LENGTH_SHORT).show()
             var geofenceHandler = GeofenceService()
-            geofenceHandler.updateGeofenceLocations(applicationContext);
+            geofenceHandler.updateGeofenceLocations(applicationContext)
             popupWindow.dismiss()
         }
 

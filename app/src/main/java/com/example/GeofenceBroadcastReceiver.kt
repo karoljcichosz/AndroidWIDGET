@@ -46,6 +46,7 @@ class GeofenceBroadcastReceiver : BroadcastReceiver() {
 
             // Send notification and log the transition details.
             sendNotification( geofenceTransitionDetails, context!!)
+            
         }
     }
 
@@ -106,4 +107,6 @@ class GeofenceBroadcastReceiver : BroadcastReceiver() {
             notificationManager.createNotificationChannel(channel)
         }
     }
+
+
 }

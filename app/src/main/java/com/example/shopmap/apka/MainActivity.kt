@@ -1,26 +1,41 @@
 package com.example.shopmap.apka
 
+import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
+import android.content.ServiceConnection
+import android.location.LocationManager
 import android.os.Bundle
-import android.os.Looper
+import android.os.IBinder
+import android.provider.Settings
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.example.shopmap.ListActivity
 import com.example.shopmap.MapsActivity
 import com.example.shopmap.R
-import com.example.shopmap.geofence.GeofenceService
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationResult
-
+import com.example.GeofenceService
 
 class MainActivity : AppCompatActivity() {
 
     lateinit private var intentMap: Intent
     lateinit private var intentList : Intent
+    private lateinit var mService: GeofenceService
+    private var mBound: Boolean = false
 
-    private lateinit var locationCallback: LocationCallback
+    private val connection = object : ServiceConnection {
+
+        override fun onServiceConnected(className: ComponentName, service: IBinder) {
+            // We've bound to LocalService, cast the IBinder and get LocalService instance
+            val binder = service as GeofenceService.LocalBinder
+            mService = binder.getService()
+            mBound = true
+        }
+
+        override fun onServiceDisconnected(arg0: ComponentName) {
+            mBound = false
+        }
+    }
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,44 +43,31 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         intentList=Intent(this, ListActivity::class.java)
         intentMap=Intent(this, MapsActivity::class.java)
-        val geofenceService : GeofenceService = GeofenceService();
-        geofenceService.updateGeofenceLocations(applicationContext)
-
-        this.handleLocationUpdates(geofenceService)
     }
-    private fun handleLocationUpdates(geofenceService: GeofenceService) {
-        val locationRequest : LocationRequest? = this.createLocationRequest();
-        if(locationRequest != null ){
-            locationCallback = object : LocationCallback() {
-                override fun onLocationResult(locationResult: LocationResult?) {
-                    locationResult ?: return
-                    for (location in locationResult.locations){
-                    }
-                }
-            }
-            this.startLocationUpdates(locationRequest, this.locationCallback)
-        }
-    }
-    private fun startLocationUpdates(locationRequest: LocationRequest, locationCallback: LocationCallback) {
-        val fusedLocationClient = FusedLocationProviderClient(this)
-        fusedLocationClient.requestLocationUpdates(
-            locationRequest,
-            locationCallback,
-            Looper.getMainLooper())
-    }
-    private fun createLocationRequest() : LocationRequest? {
-        return LocationRequest.create()?.apply {
-            interval = 10000
-            fastestInterval = 5000
-            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-        }
-    }
-
 
     override fun onStart() {
         super.onStart()
-        var geofenceHandler = GeofenceService()
+        val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+//        startService(Intent(this, GeofenceService::class.java))
+        val intent =Intent(this, GeofenceService::class.java)
+        startService(intent)
+        bindService(intent, connection, Context.BIND_AUTO_CREATE)
+        if(mBound)
+            mService.updateGeofenceLocations(this)
+
+
+        if(!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
+        {
+            startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+        }
     }
+
+    override fun onStop() {
+        super.onStop()
+        unbindService(connection)
+        mBound = false
+    }
+
 
     fun clickList(view: View)
     {

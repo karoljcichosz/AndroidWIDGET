@@ -2,12 +2,16 @@ package com.example.shopmap
 
 import android.annotation.SuppressLint
 import android.annotation.TargetApi
+import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
+import android.os.IBinder
 import android.transition.TransitionManager
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -16,7 +20,7 @@ import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.room.Room
-import com.example.shopmap.geofence.GeofenceService
+import com.example.GeofenceService
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -67,7 +71,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
             MyDB::class.java, "database-name"
         ).allowMainThreadQueries().build()
         shops= db.ProductDAO().all
-
+        val intent = Intent(this, GeofenceService::class.java)
     }
 
     /**
@@ -82,13 +86,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
     @SuppressLint("MissingPermission")
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
-
         // Add a marker in Sydney and move the camera
         val sydney = LatLng(-34.0, 151.0)
         if (locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)==null)
             mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
         else
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(LatLng(locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).latitude, locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).longitude)))
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(LatLng(locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)!!.latitude, locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)!!.longitude)))
         shops.forEach{shop ->
             mMap.addMarker(MarkerOptions().position(LatLng(shop.x,shop.y)).title(shop.nazwa));
             if (shop.promien!=0)
@@ -102,6 +105,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
         mMap.isMyLocationEnabled=true
 
     }
+
 
     override fun onLocationChanged(location: Location?) {
 
@@ -138,8 +142,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
             if (shop.promien!=0)
                 mMap.addCircle(CircleOptions().center(LatLng(shop.x,shop.y)).radius(shop.promien.toDouble()))
             Toast.makeText(applicationContext,"Dodano", Toast.LENGTH_SHORT).show()
-            var geofenceHandler = GeofenceService()
-            geofenceHandler.updateGeofenceLocations(applicationContext);
             popupWindow.dismiss()
         }
 

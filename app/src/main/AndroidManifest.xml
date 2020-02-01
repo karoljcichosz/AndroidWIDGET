@@ -57,10 +57,8 @@
             android:enabled="true"
             android:exported="true">
         </receiver>
-        <service android:name=".geofence.GeofenceService"
-            android:enabled="true"
-            android:exported="true">
-        </service>
+        <service android:name="com.example.GeofenceService"
+            android:enabled="true"/>
     </application>
 
 </manifest>
