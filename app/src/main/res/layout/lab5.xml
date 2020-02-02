@@ -26,4 +26,8 @@
         android:text="next"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" android:id="@+id/next"/>
+    <Button
+        android:text="stop"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:id="@+id/stop"/>
 </LinearLayout>

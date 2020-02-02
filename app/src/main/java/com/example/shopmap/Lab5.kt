@@ -67,14 +67,10 @@ class Lab5 : AppWidgetProvider() {
         }
         if (intent.action == PLAY_ACTION) {
 
-            val action = intent.action
-
-            if (PLAY_ACTION == action) {
                 if (mp.isPlaying)
                     mp.pause()
                 else
                     mp.start()
-            }
         }
 
         if(intent.action== NEXT_ACTION)
@@ -85,13 +81,23 @@ class Lab5 : AppWidgetProvider() {
                 mp = MediaPlayer.create(context.applicationContext, R.raw.mb)
             tmp2 = (!tmp2)!!
         }
+
+        if(intent.action== STOP_ACTION )
+        {
+            mp.stop()
+            if (tmp2!!)
+                mp = MediaPlayer.create(context.applicationContext, R.raw.mb)
+            else
+                mp = MediaPlayer.create(context.applicationContext, R.raw.ma)
+        }
     }
 
     companion object {
         private val ACTION_SIMPLEAPPWIDGET = "ACTION_BROADCASTWIDGETSAMPLE"
         private val OPEN_BROWSER_ACTION = "ACTION_BROWSER"
         private val PLAY_ACTION = "ACTION_PLAY"
-        private val NEXT_ACTION = "StopSong"
+        private val NEXT_ACTION = "NEXT_SONG"
+        private val STOP_ACTION = "STOP_SONG"
         private var tmp: Boolean = true
         private var tmp2: Boolean = true
         private lateinit var mp : MediaPlayer
@@ -147,6 +153,16 @@ class Lab5 : AppWidgetProvider() {
                 PendingIntent.FLAG_UPDATE_CURRENT
             )
             views.setOnClickPendingIntent(R.id.next, pendingIntent)
+
+            clickIntent = Intent(context, Lab5::class.java)
+            clickIntent.action = STOP_ACTION
+            pendingIntent = PendingIntent.getBroadcast(
+                context,
+                appWidgetId,
+                clickIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT
+            )
+            views.setOnClickPendingIntent(R.id.stop, pendingIntent)
 
             appWidgetManager.updateAppWidget(appWidgetId, views)
 
