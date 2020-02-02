@@ -19,7 +19,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <receiver android:name=".lab5">
+        <receiver android:name=".Lab5">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -27,7 +27,6 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/lab5_info" />
         </receiver>
-
         <activity android:name=".ListActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

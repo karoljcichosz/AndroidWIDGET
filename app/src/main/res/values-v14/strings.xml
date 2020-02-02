@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ShopMap</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="ilo">opis</string>
+    <string name="y">y</string>
+    <string name="x">x</string>
+    <string name="cena">promien</string>
+    <string name="nazwa">nazwa</string>
+    <string name="usu">unun</string>
+    <string name="lista_zakup_w">coo</string>
+    <string name="title_activity_main2">Main2Activity</string>
+    <string name="mapa">Mapa</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
+    <string name="aaa">aaa</string>
+    <string name="todo">TODO</string>
+    <string name="otw_rz_google_com">Otwórz google.com</string>
+    <string name="next">Next</string>
+    <string name="stop">Stop</string>
+    <string name="play">Play</string>
+    <string name="pause">Pause</string>
+</resources>
